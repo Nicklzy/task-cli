@@ -1,13 +1,23 @@
 {
   "name": "task-cli",
   "version": "0.0.1",
-  "description": "",
+  "description": "a cli for to do list",
   "main": "index.js",
+  "bin": {
+    "t": "./cli.js"
+  },
+  "files": [
+    "*.js"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nicklzy/task-cli"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Nicklzy",
   "license": "MIT",
   "dependencies": {
     "commander": "^7.2.0",
