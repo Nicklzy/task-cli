@@ -1,54 +1,82 @@
-const homedir = require('os').homedir();
-const home = process.env.HOME || homedir;
-const path = require('path');
-const dbPath = path.join(home, '.todo');
-const fs = require('fs');
 const inquirer = require('inquirer');
 const exitValue = -1;
+const addValue = -2;
 const exitItem = {name: 'exit', value: exitValue}
+const addItem = {name: '+ add a task', value: addValue}
+const db = require('./db');
+
+function setAsUndone(list, index) {
+    list[index].done = false;
+    db.write(list)
+}
+
+function setAsComplete(list, index) {
+    list[index].done = true;
+    db.write(list)
+}
+
+function updateTitle(list, index) {
+    inquirer
+        .prompt(
+            {
+                type: 'input',
+                name: 'value',
+                message: "title",
+                default: list[index].title,
+            })
+        .then((answer) => {
+            list[index].title = answer.value
+            db.write(list)
+        })
+}
+
+function deleteTask(list, index) {
+    list.splice(index, 1)
+    db.write(list)
+}
+
+const actions = {
+    setAsUndone,
+    setAsComplete,
+    updateTitle,
+    deleteTask
+}
+
+function askToAddTask(list) {
+    inquirer
+        .prompt(
+            {
+                type: 'input',
+                name: 'value',
+                message: "enter title",
+            })
+        .then((answer) => {
+            list.push({title: answer.value, done: false})
+            db.write(list)
+        })
+}
+
 module.exports = {
-    read: (path = dbPath) => {
-        return new Promise((resolve, reject) => {
-            fs.readFile(path, {flag: 'a+'}, (err, data) => {
-                if (err) {
-                    reject(err)
-                    return;
-                }
-                let result
-                try {
-                    result = JSON.parse(data.toString())
-                } catch (e) {
-                    result = []
-                }
-                resolve(result)
-            })
-        })
+    async add(taskName) {
+        const list = await db.read()
+        list.push({title: taskName, done: false})
+        await db.write(list)
     },
-    async write(taskName, path = dbPath) {
-        const list = await this.read()
-        const task = list.concat([{title: taskName, done: false}]);
-        return new Promise((resolve, reject) => {
-            fs.writeFile(path, JSON.stringify(task), (err) => {
-                if (err) {
-                    reject(err);
-                    return
-                }
-                resolve()
-            })
-        })
+    clear() {
+        db.write([])
     },
     async showAll() {
-        const list = await this.read();
+        const list = await db.read();
         inquirer
             .prompt(
                 {
                     type: 'list',
                     name: 'index',
                     message: 'Which task do you want to choose?',
-                    choices: [{name: 'exit', value: '-1'}, ...list.map((item, index) => ({
+                    choices: [exitItem, ...list.map((item, index) => ({
                         name: item.title,
                         value: String(index)
-                    }))],
+                    }))].concat([addItem]),
                 })
             .then((answers) => {
                 const index = Number(answers.index);
@@ -73,15 +101,18 @@ module.exports = {
                             },
                             {
                                 name: 'delete',
-                                value: 'delete'
+                                value: 'deleteTask'
                             }
                         ]
                     })
                         .then(({operator}) => {
-                            if (operator === exitValue) {
-
+                            if (operator !== exitValue) {
+                                const fn = actions[operator]
+                                fn && fn(list, index)
                             }
                         })
+                } else if (index === addValue) {
+                    askToAddTask(list)
                 }
             })
             .catch((error) => {
@@ -91,5 +122,5 @@ module.exports = {
                     // Something else went wrong
                 }
             });
-    }
+    },
 }
