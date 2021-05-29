@@ -4,7 +4,7 @@
   "description": "a cli for to do list",
   "main": "index.js",
   "bin": {
-    "t": "./cli.js"
+    "t": "cli.js"
   },
   "files": [
     "*.js"
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nicklzy/task-cli"
+    "url": "https://github.com/Nicklzy/to-do-cli"
   },
   "keywords": [],
   "author": "Nicklzy",

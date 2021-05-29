@@ -74,7 +74,7 @@ module.exports = {
                     name: 'index',
                     message: 'Which task do you want to choose?',
                     choices: [exitItem, ...list.map((item, index) => ({
-                        name: item.title,
+                        name: `${item.done ? '[x]' : '[_]'} ${item.title}`,
                         value: String(index)
                     }))].concat([addItem]),
                 })
