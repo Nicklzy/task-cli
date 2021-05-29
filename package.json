@@ -1,5 +1,5 @@
 {
-  "name": "to-do-cli",
+  "name": "@nicklzy/to-do-list",
   "version": "0.0.1",
   "description": "a cli for to do list",
   "main": "index.js",
