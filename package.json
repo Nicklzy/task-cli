@@ -1,6 +1,6 @@
 {
   "name": "@nicklzy/to-do-list",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a cli for to do list",
   "main": "index.js",
   "bin": {
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nicklzy/to-do-cli"
+    "url": "https://github.com/Nicklzy/to-do-list"
   },
   "keywords": [],
   "author": "Nicklzy",
